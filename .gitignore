@@ -1,0 +1,28 @@
+# Virtual environment
+ccfd_venv/
+venv/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+logs/
+*.log
+
+# Data (raw datasets)
+data/*.csv
+
+# Model artifacts
+models/
+*.h5
+*.pkl
+
+# OS files
+.DS_Store
+Thumbs.db
