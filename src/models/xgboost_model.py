@@ -1,4 +1,4 @@
-from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, roc_auc_score
 from sklearn.pipeline import Pipeline
 
@@ -7,27 +7,37 @@ from src.utils.logger import logger
 from src.utils.exceptions import FraudException
 
 
-class LogisticRegressionTrainer:
-    def __init__(self):
+class XGBoostModel:
+    def __init__(self, random_state: int = 42):
         """
         REMARK:
         - GENERAL MODEL INIT
-        - class_weight='balanced' for imbalanced fraud data
+        - Gradient boosting model for imbalanced fraud data
         """
-        self.model = LogisticRegression(
-            max_iter=1000,
-            class_weight="balanced"
-        )
-        self.pipeline = None
+        try:
+            self.model = XGBClassifier(
+                n_estimators=200,
+                max_depth=6,
+                learning_rate=0.1,
+                subsample=0.8,
+                objective="binary:logistic",
+                eval_metric="auc",
+                random_state=random_state,
+                n_jobs=-1
+            )
+            self.pipeline = None
+
+        except Exception as e:
+            raise FraudException("XGBoost init failed", e)
 
     def train(self, X_train, y_train):
         """
         REMARK:
-        - OLD APPROACH (commented) → direct model.fit
-        - NEW APPROACH (active) → Pipeline to avoid data leakage
+        - OLD APPROACH (commented): direct model.fit
+        - NEW APPROACH (active): Pipeline to avoid data leakage
         """
         try:
-            logger.info("Training Logistic Regression Model")
+            logger.info("Training XGBoost Model")
 
             # ===============================
             # OLD APPROACH (NO PIPELINE)
@@ -47,21 +57,18 @@ class LogisticRegressionTrainer:
 
             self.pipeline.fit(X_train, y_train)
 
-            logger.info("Logistic Regression training completed")
-            return self.pipeline
+            logger.info("XGBoost training completed")
 
         except Exception as e:
-            logger.error("Logistic Regression training failed")
-            raise FraudException("Logistic Regression Training Failed", e)
+            raise FraudException("XGBoost training failed", e)
 
     def evaluate(self, X_test, y_test):
         """
         REMARK:
-        - Uses trained pipeline
-        - Evaluation done on scaled test data automatically
+        - Evaluation using trained pipeline
         """
         try:
-            logger.info("Evaluating Logistic Regression model")
+            logger.info("Evaluating XGBoost model")
 
             # ===============================
             # OLD APPROACH (NO PIPELINE)
@@ -78,11 +85,10 @@ class LogisticRegressionTrainer:
             report = classification_report(y_test, y_pred)
             auc = roc_auc_score(y_test, y_proba)
 
-            logger.info(f"Classification Report:\n{report}")
-            logger.info(f"ROC-AUC Score: {auc}")
+            logger.info(f"XGBoost Classification Report:\n{report}")
+            logger.info(f"XGBoost ROC-AUC Score: {auc}")
 
             return report, auc
 
         except Exception as e:
-            logger.error("Logistic Regression evaluation failed")
-            raise FraudException("Logistic Regression Evaluation Failed", e)
+            raise FraudException("XGBoost evaluation failed", e)
