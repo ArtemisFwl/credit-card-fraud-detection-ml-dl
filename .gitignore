@@ -23,6 +23,10 @@ models/
 *.h5
 *.pkl
 
+# Allow source code models
+!src/models/
+!src/models/*.py
+
 # OS files
 .DS_Store
 Thumbs.db
