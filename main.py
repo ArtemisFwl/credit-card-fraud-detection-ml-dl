@@ -1,15 +1,17 @@
-print("Project setup successful")
+from src.data.data_loader import DataLoader
 
 from src.utils.logger import logger
 from src.utils.exceptions import FraudException
 
 if __name__== "__main__":
   try:
-    logger.info("Project Execution Started")
+    logger.info("Pipeline Started")
 
-    x=1/0
+    loader=DataLoader("data/creditcard.csv")
+
+    df=loader.load_data()
+    logger.info("Dataloader Setup completed successfully")
 
   except Exception as e:
-    logger.error("Error occured in main execution")
-
-    raise FraudException ("Main Pipeline Failed",e)
+    logger.error("Pipeline Failed")
+    raise FraudException("Main Pipeline Failed")
