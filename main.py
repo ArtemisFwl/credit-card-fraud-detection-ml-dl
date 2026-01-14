@@ -15,3 +15,13 @@ if __name__== "__main__":
   except Exception as e:
     logger.error("Pipeline Failed")
     raise FraudException("Main Pipeline Failed")
+  
+from src.preprocessing.preprocessor  import Preprocessor
+
+preprocessor=Preprocessor()
+
+X,y= preprocessor.split_features_target(df)
+
+X_train, X_test, y_train, y_test =preprocessor.train_test_split_data(X, y)
+
+logger.info("Preprocessing step completed successfully")
